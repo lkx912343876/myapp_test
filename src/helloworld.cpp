@@ -24,13 +24,28 @@ HelloWorld::HelloWorld()
 
 void HelloWorld::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 {
-    Q_UNUSED(req);
+//    Q_UNUSED(req);
 
-    QByteArray body = "{\"message\": \"Hello Qt World\"}";
-    resp->setHeader("Content-Type", QString::fromUtf8("application/json"));
-    resp->setHeader("Content-Length", QString::number(body.size()));
-    resp->writeHead(200);
-    resp->end(body);
+//    QByteArray body = "{\"message\": \"Hello Qt World\"}";
+//    resp->setHeader("Content-Type", QString::fromUtf8("application/json"));
+//    resp->setHeader("Content-Length", QString::number(body.size()));
+//    resp->writeHead(200);
+//    resp->end(body);
+    QRegExp exp("^/user/([a-z]+)$");
+    if( exp.indexIn(req->path()) != -1 )
+    {
+        resp->setHeader("Content-Type", "text/html");
+        resp->writeHead(200);
+
+        QString name = exp.capturedTexts()[1];
+        QString body = tr("<html><head><title>Greeting App</title></head><body><h1>Hello %1!</h1></body></html>");
+        resp->end(body.arg(name).toUtf8());
+    }
+    else
+    {
+        resp->writeHead(403);
+        resp->end(QByteArray("You aren't allowed here!"));
+    }
 }
 
 /// main
