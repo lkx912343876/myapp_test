@@ -47,7 +47,7 @@ Responder::Responder(QHttpRequest *req, QHttpResponse *resp)
         /// @todo There should be a way to tell request to stop streaming data
         return;
     }
-
+    resp->setHeader("Access-Control-Allow-Origin", "*");
     resp->setHeader("Content-Type", "text/html");
     resp->writeHead(200);
 

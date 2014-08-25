@@ -3,13 +3,13 @@ TARGET = greeting
 QT += network
 QT -= gui
 
-CONFIG += debug
+CONFIG += release
 
 INCLUDEPATH += ../../src
 LIBS += -L../../lib
 
 win32 {
-    debug: LIBS += -lqhttpserverd
+    debug: LIBS += -lqhttpserver
     else: LIBS += -lqhttpserver
 } else {
     LIBS += -lqhttpserver
