@@ -71,7 +71,7 @@ void Responder::accumulate(const QByteArray &data)
 
 void Responder::reply()
 {
-    m_resp->end(QByteArray("test demo</p></body></html>"));
+    m_resp->end(QByteArray("</p></body></html>"));
 }
 
 /// main
