@@ -31,21 +31,47 @@ void HelloWorld::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 //    resp->setHeader("Content-Length", QString::number(body.size()));
 //    resp->writeHead(200);
 //    resp->end(body);
-    QRegExp exp("^/user/([a-z]+)$");
-    if( exp.indexIn(req->path()) != -1 )
-    {
-        resp->setHeader("Content-Type", "text/html");
-        resp->writeHead(200);
+    new Responder(req, resp);
+}
+/// Responder
 
-        QString name = exp.capturedTexts()[1];
-        QString body = tr("<html><head><title>Greeting App</title></head><body><h1>Hello %1!</h1></body></html>");
-        resp->end(body.arg(name).toUtf8());
-    }
-    else
+Responder::Responder(QHttpRequest *req, QHttpResponse *resp)
+    : m_req(req)
+    , m_resp(resp)
+{
+    QRegExp exp("^/user/([a-z]+$)");
+    if (exp.indexIn(req->path()) == -1)
     {
         resp->writeHead(403);
         resp->end(QByteArray("You aren't allowed here!"));
+        /// @todo There should be a way to tell request to stop streaming data
+        return;
     }
+
+    resp->setHeader("Content-Type", "text/html");
+    resp->writeHead(200);
+
+    QString name = exp.capturedTexts()[1];
+    QString bodyStart = tr("<html><head><title>BodyData App</title></head><body><h1>Hello %1!</h1><p>").arg(name);
+    resp->write(bodyStart.toUtf8());
+
+    connect(req, SIGNAL(data(const QByteArray&)), this, SLOT(accumulate(const QByteArray&)));
+    connect(req, SIGNAL(end()), this, SLOT(reply()));
+    connect(m_resp, SIGNAL(done()), this, SLOT(deleteLater()));
+}
+
+Responder::~Responder()
+{
+}
+
+void Responder::accumulate(const QByteArray &data)
+{
+    m_resp->write(data);
+}
+
+void Responder::reply()
+{
+    m_resp->end(QByteArray("</p></body></html>"));
 }
 
 /// main
