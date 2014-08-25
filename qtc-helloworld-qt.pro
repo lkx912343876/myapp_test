@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += qhttpserver \
-           src
+           bodydata
 
 src.depends = qhttpserver
