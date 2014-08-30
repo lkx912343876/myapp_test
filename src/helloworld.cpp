@@ -52,7 +52,7 @@ Responder::Responder(QHttpRequest *req, QHttpResponse *resp)
     resp->writeHead(200);
 
     QString name = exp.capturedTexts()[1];
-    QString bodyStart = tr("<html><head><title>BodyData App</title></head><body><h1>Hello %1!</h1><p>port:%2</><p>").arg(name).arg(qgetenv("PORT"));
+    QString bodyStart = tr("<html><head><title>BodyData App</title></head><body><h1>Hello %1!</h1><p>port:%2</><p>").arg(name).arg(qgetenv("PORT").toInt());
     resp->write(bodyStart.toUtf8());
 
     connect(req, SIGNAL(data(const QByteArray&)), this, SLOT(accumulate(const QByteArray&)));
